@@ -1,4 +1,3 @@
-{-# LANGUAGE NoMonomorphismRestriction #-}
 {-# LANGUAGE RankNTypes #-}
 
 module Kaos.Math.AugmentedRational
@@ -58,8 +57,7 @@ approximateValue (Exact z q) = (pi ** (fromInteger z)) * (fromRational q)
 approximateValue (Approximate x) = x
 
 approx1 :: (forall a.Floating a => a -> a) -> AugmentedRational -> AugmentedRational
-approx1 f x = let fx = f $ approximateValue x
-               in Approximate fx
+approx1 f x = Approximate (f (approximateValue x))
 
 approx1' :: [((Integer, Rational), (Integer, Rational))] -> (forall a.Floating a => a -> a) -> AugmentedRational -> AugmentedRational
 approx1' exacts f x@(Exact z q) = let exactResult = lookup (z,q) exacts
