@@ -16,6 +16,7 @@ exact z q | q == 0 = Exact 0 0
 
 instance Show AugmentedRational where
   show (Exact z q) | z == 0 = "Exactly " ++ show q
+                   | z == 1 = "Exactly pi * " ++ show q
                    | otherwise = "Exactly pi^" ++ show z ++ " * " ++ show q
   show (Approximate x) = "Approximately " ++ show (x :: Double)
 
