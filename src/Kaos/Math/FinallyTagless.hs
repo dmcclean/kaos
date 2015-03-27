@@ -1,11 +1,12 @@
 module Kaos.Math.FinallyTagless
 where
 
-import Prelude hiding (Fractional(..), Floating(..))
+import Prelude hiding (Fractional(..), Floating(..), Real(..))
 import Prelude (Fractional, Floating)
 import qualified Prelude as P
 import Control.Applicative
 import Data.Functor.Identity
+import Kaos.Math.Real
 
 class Numericliteral e where
   fromRational :: (Fractional x) => Rational -> e x
