@@ -22,6 +22,8 @@ instance Show AugmentedRational where
 instance Num AugmentedRational where
   fromInteger n = exact 0 (fromInteger n)
   (Exact z1 q1) * (Exact z2 q2) = exact (z1 + z2) (q1 * q2)
+  (Exact _ 0) * _ = 0
+  _ * (Exact _ 0) = 0
   x * y = Approximate $ approximateValue x * approximateValue y
   (Exact z1 q1) + (Exact z2 q2) | z1 == z2 = exact z1 (q1 + q2) -- by distributive property
   x + y = Approximate $ approximateValue x + approximateValue y
