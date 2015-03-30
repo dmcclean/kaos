@@ -1,6 +1,11 @@
 {-# LANGUAGE RankNTypes #-}
 
 module Kaos.Math.AugmentedRational
+(
+  AugmentedRational(..),
+  exact,
+  approximateValue
+)
 where
 
 import Data.Group
