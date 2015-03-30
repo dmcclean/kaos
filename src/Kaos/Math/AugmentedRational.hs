@@ -35,7 +35,7 @@ instance Num AugmentedRational where
   abs (Exact z q) = exact z (abs q)
   abs (Approximate x) = Approximate $ abs x
   signum (Exact _ q) = exact 0 (signum q)
-  signum (Approximate x) = Approximate $ signum x
+  signum (Approximate x) = Approximate $ signum x -- we leave this tagged as approximate because we don't know "how" approximate the input was. a case could be made for exact answers here.
   negate x = (-1) * x
 
 instance Fractional AugmentedRational where
