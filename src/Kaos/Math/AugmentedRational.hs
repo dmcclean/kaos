@@ -28,6 +28,7 @@ instance Num AugmentedRational where
   (Exact z1 q1) + (Exact z2 q2) | z1 == z2 = exact z1 (q1 + q2) -- by distributive property
   x + y = Approximate $ approximateValue x + approximateValue y
   abs (Exact z q) = exact z (abs q)
+  abs (Approximate x) = Approximate $ abs x
   signum (Exact _ q) = exact 0 (signum q)
   signum (Approximate x) = Approximate $ signum x
   negate x = (-1) * x
