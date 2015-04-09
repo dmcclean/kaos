@@ -1,4 +1,3 @@
-{-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE RankNTypes #-}
 
 {-# OPTIONS_HADDOCK show-extensions #-}
@@ -18,9 +17,9 @@ factors defined experimentally.
 -}
 module Kaos.Math.AugmentedRational
 (
-  AugmentedRational(Approximate),
-  pattern Exact,
-  approximateValue
+  AugmentedRational(..),
+  approximateValue,
+  isExactZero
 )
 where
 
@@ -28,14 +27,8 @@ import Data.Group
 
 -- | Represents an exact or approximate real value.
 -- The exactly representable values are rational multiples of an integer power of pi.
-data AugmentedRational = Exact' Integer Rational
-                       | Approximate (forall a.Floating a => a) -- ^ An approximate value.
-
--- | Matches values which are exactly known, or constructs such a value from
--- an integer power of pi and a rational factor.
-pattern Exact z q <- Exact' z q where
-  Exact z q | q == 0 = Exact' 0 0
-            | otherwise = Exact' z q
+data AugmentedRational = Exact Integer Rational -- ^ @'Exact' z q@ = q * pi^z. Note that this means there are many representations of zero.
+                       | Approximate (forall a.Floating a => a) -- ^ An approximate value. This representation was chosen because it allows conversion to floating types using their native definition of 'pi'.
 
 -- | Approximates an exact or approximate value, converting it to a `Floating` type.
 -- This uses the value of `pi` supplied by the destination type, to provide the appropriate
@@ -43,6 +36,11 @@ pattern Exact z q <- Exact' z q where
 approximateValue :: Floating a => AugmentedRational -> a
 approximateValue (Exact z q) = (pi ^ z) * (fromRational q)
 approximateValue (Approximate x) = x
+
+-- | Identifies whether an 'AugmentedRational' is an exact representation of zero.
+isExactZero :: AugmentedRational -> Bool
+isExactZero (Exact _ 0) = True
+isExactZero _ = False
 
 instance Show AugmentedRational where
   show (Exact z q) | z == 0 = "Exactly " ++ show q
@@ -70,12 +68,13 @@ instance Fractional AugmentedRational where
 
 instance Floating AugmentedRational where
   pi = Exact 1 1
-  exp = approx1' [((0, 0), (0, 1))] exp
-  log = approx1' [((0, 1), (0, 0))] log
-  sin = approx1' [((0, 0), (0, 0)),
-                  ((1, 1/2), (0, 1)),
-                  ((1, 1), (0, 0))] sin
-  cos = sin . (+ (pi / 2))
+  exp x | isExactZero x = 1
+        | otherwise = approx1 exp x
+  log (Exact 0 1) = 0
+  log x = approx1 log x
+  -- It would be possible to give tighter bounds to the trig functions, preserving exactness for arguments that have an exactly representable result.
+  sin = approx1 sin
+  cos = approx1 cos
   tan = approx1 tan
   asin = approx1 asin
   atan = approx1 atan
@@ -89,13 +88,6 @@ instance Floating AugmentedRational where
 
 approx1 :: (forall a.Floating a => a -> a) -> AugmentedRational -> AugmentedRational
 approx1 f x = Approximate (f (approximateValue x))
-
-approx1' :: [((Integer, Rational), (Integer, Rational))] -> (forall a.Floating a => a -> a) -> AugmentedRational -> AugmentedRational
-approx1' exacts f x@(Exact z q) = let exactResult = lookup (z,q) exacts
-                                   in case exactResult of
-                                        Nothing -> approx1 f x
-                                        Just (z', q') -> Exact z' q'
-approx1' _ f x = approx1 f x
 
 -- | The multiplicative monoid over augmented rationals.
 instance Monoid AugmentedRational where
