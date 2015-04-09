@@ -41,7 +41,7 @@ pattern Exact z q <- Exact' z q where
 -- This uses the value of `pi` supplied by the destination type, to provide the appropriate
 -- precision.
 approximateValue :: Floating a => AugmentedRational -> a
-approximateValue (Exact z q) = (pi ** (fromInteger z)) * (fromRational q)
+approximateValue (Exact z q) = (pi ^ z) * (fromRational q)
 approximateValue (Approximate x) = x
 
 instance Show AugmentedRational where
