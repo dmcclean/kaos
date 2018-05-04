@@ -29,7 +29,6 @@ instance HasTimeDependence (Proxy 'TimeVarying) where
   timeDependence _ = TimeVarying
 
 type family Compose (a :: TimeDependence) (b :: TimeDependence) where
-  Compose TimeInvariant TimeInvariant = TimeInvariant
   Compose TimeVarying TimeInvariant = TimeVarying
   Compose TimeInvariant TimeVarying = TimeVarying
-  Compose TimeVarying TimeVarying = TimeVarying
+  Compose a a = a

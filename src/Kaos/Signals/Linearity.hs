@@ -29,7 +29,6 @@ instance HasLinearity (Proxy 'NonLinear) where
   linearity _ = NonLinear
 
 type family Compose (a :: Linearity) (b :: Linearity) where
-  Compose Linear Linear = Linear
   Compose Linear NonLinear = NonLinear
   Compose NonLinear Linear = NonLinear
-  Compose NonLinear NonLinear = NonLinear
+  Compose a a = a

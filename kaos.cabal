@@ -21,6 +21,7 @@ library
                        Kaos.Signals.SignalFunctions
                        Kaos.Signals.TimeDomains
                        Kaos.Signals.Linearity
+                       Kaos.Signals.TimeDependence
   -- other-modules:       
   -- other-extensions:    
   build-depends:       base >=4.8 && <5,
